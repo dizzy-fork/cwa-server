@@ -22,7 +22,10 @@ package app.coronawarn.server.common.persistence.repository;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import java.util.List;
+import javax.persistence.NamedNativeQuery;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -38,8 +41,14 @@ public interface DiagnosisKeyRepository extends JpaRepository<DiagnosisKey, Long
   /**
    * TODO.
    *
-   * @param diagnosisKeys TODO
    * @return
    */
-  List<DiagnosisKey> saveAllDoNothingOnConflict(Iterable<DiagnosisKey> diagnosisKeys);
+  @Modifying
+  @Query(
+      nativeQuery = true,
+      value = "SET MODE PostgreSQL;INSERT INTO diagnosis_key"
+          + "(key_data, rolling_start_interval_number, rolling_period, submission_timestamp, transmission_risk_level)"
+          + " VALUES(?1, ?2, ?3, ?4, ?5) ON CONFLICT DO NOTHING")
+  List<DiagnosisKey> saveAllDoNothingOnConflict(byte[] keyData, int startIntervalNumber, int rollingPeriod,
+      long submissionTimestamp, int transmissionRiskLevel);
 }

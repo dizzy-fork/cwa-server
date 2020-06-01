@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,15 +22,40 @@ package app.coronawarn.server.common.persistence;
 
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
+import javax.sql.DataSource;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 @SpringBootApplication
+@EnableAutoConfiguration
 @Configuration
 public class TestApplication {
+
   @Bean
   DiagnosisKeyService createDiagnosisKeyService(DiagnosisKeyRepository keyRepository) {
     return new DiagnosisKeyService(keyRepository);
   }
+
+
+  @Bean
+  public DataSource datasource() {
+    return DataSourceBuilder.create()
+        .driverClassName("org.h2.Driver")
+        .url("jdbc:h2:mem:test;MODE=PostgreSQL")
+        .username("sa")
+        .password("")
+        .build();
+  }
+
+//  @Bean(name = "dataSource")
+//  public DriverManagerDataSource getDataSource() {
+//    DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource();
+//    driverManagerDataSource.setDriverClassName("org.h2.Driver");
+//    driverManagerDataSource.setUrl("jdbc:h2:mem:db1;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE");
+//    return driverManagerDataSource;
+//  }
 }

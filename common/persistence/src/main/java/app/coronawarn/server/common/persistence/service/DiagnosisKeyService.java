@@ -33,12 +33,16 @@ import javax.validation.ConstraintViolation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Configuration
 public class DiagnosisKeyService {
 
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyService.class);
@@ -56,7 +60,9 @@ public class DiagnosisKeyService {
    * @throws IllegalArgumentException in case the given collection contains {@literal null}.
    */
   public void saveDiagnosisKeys(Collection<DiagnosisKey> diagnosisKeys) {
-    keyRepository.saveAllDoNothingOnConflict(diagnosisKeys);
+    for (DiagnosisKey diagnosisKey: diagnosisKeys) {
+      keyRepository.saveAllDoNothingOnConflict(diagnosisKey.getKeyData(), 1, 2, 2L, 4);
+    }
   }
 
   /**
