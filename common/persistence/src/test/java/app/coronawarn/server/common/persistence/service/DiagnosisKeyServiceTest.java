@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import javax.sql.DataSource;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -43,12 +44,14 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 @EnableAutoConfiguration
 @DataJpaTest
 class DiagnosisKeyServiceTest {
+
+  @Autowired
+  private DataSource dataSource;
+
 
   @Autowired
   private DiagnosisKeyService diagnosisKeyService;
@@ -144,6 +147,7 @@ class DiagnosisKeyServiceTest {
           .withKeyData(new byte[16])
           .withRollingStartIntervalNumber((int) (OffsetDateTime.now(UTC).toEpochSecond() / 600))
           .withTransmissionRiskLevel(2)
+          .withRollingPeriod(144)
           .withSubmissionTimestamp(0L).build());
 
       diagnosisKeyService.saveDiagnosisKeys(keys);
@@ -160,11 +164,13 @@ class DiagnosisKeyServiceTest {
             .withKeyData("1234567890123456".getBytes())
             .withRollingStartIntervalNumber((int) (OffsetDateTime.now(UTC).toEpochSecond() / 600) - 2)
             .withTransmissionRiskLevel(2)
+            .withRollingPeriod(144)
             .withSubmissionTimestamp(0L).build(),
         DiagnosisKey.builder()
             .withKeyData("1234567890123456".getBytes())
             .withRollingStartIntervalNumber((int) (OffsetDateTime.now(UTC).toEpochSecond() / 600) - 3)
             .withTransmissionRiskLevel(3)
+            .withRollingPeriod(144)
             .withSubmissionTimestamp(0L).build());
 
     diagnosisKeyService.saveDiagnosisKeys(keys);
@@ -183,6 +189,7 @@ class DiagnosisKeyServiceTest {
         .withKeyData(randomBytes)
         .withRollingStartIntervalNumber(600)
         .withTransmissionRiskLevel(2)
+        .withRollingPeriod(144)
         .withSubmissionTimestamp(submissionTimeStamp).build();
   }
 

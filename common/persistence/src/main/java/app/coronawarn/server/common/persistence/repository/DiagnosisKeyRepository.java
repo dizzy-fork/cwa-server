@@ -46,9 +46,9 @@ public interface DiagnosisKeyRepository extends JpaRepository<DiagnosisKey, Long
   @Modifying
   @Query(
       nativeQuery = true,
-      value = "SET MODE PostgreSQL;INSERT INTO diagnosis_key"
+      value = "INSERT INTO diagnosis_key"
           + "(key_data, rolling_start_interval_number, rolling_period, submission_timestamp, transmission_risk_level)"
-          + " VALUES(?1, ?2, ?3, ?4, ?5) ON CONFLICT DO NOTHING")
-  List<DiagnosisKey> saveAllDoNothingOnConflict(byte[] keyData, int startIntervalNumber, int rollingPeriod,
+          + " VALUES(?1, ?2, ?3, ?4, ?5) ON CONFLICT DO NOTHING;")
+  void saveAllDoNothingOnConflict(byte[] keyData, int startIntervalNumber, int rollingPeriod,
       long submissionTimestamp, int transmissionRiskLevel);
 }
